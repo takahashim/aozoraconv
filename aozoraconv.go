@@ -16,11 +16,11 @@ var (
 		"\u00AC", "\uFFE2", // "¬"
 	}
 	aozoraUtf8CharReplacer  = strings.NewReplacer(aozoraCharMap...)
-	aozoraUtf8CharReplacerR = strings.NewReplacer(Reverse(aozoraCharMap)...)
+	aozoraUtf8CharReplacerR = strings.NewReplacer(reverse(aozoraCharMap)...)
 )
 
-// Reverse reverses aozoraUtf8CharReplacer
-func Reverse(s []string) []string {
+// reverse reverses aozoraUtf8CharReplacer
+func reverse(s []string) []string {
 	r := make([]string, len(s))
 	for i := len(r) - 1; i >= 0; i-- {
 		opp := len(r) - i - 1
