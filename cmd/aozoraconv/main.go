@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"io"
@@ -35,7 +36,7 @@ func getOuput(path string) (output io.Writer, err error) {
 
 func getInput(path string) (input io.Reader, err error) {
 	if path == "" {
-		return os.Stdin, nil
+		return nil, errors.New("input file is not defined")
 	}
 	input, err = os.Open(path)
 	if err != nil {
@@ -59,10 +60,11 @@ func doMain() int {
 	flag.StringVar(&encoding, "e", "sjis", "set output encoding (sjis or utf8)")
 	flag.BoolVar(&useSjis, "s", false, "convert from UTF-8 into Shift_JIS")
 	flag.BoolVar(&useUtf8, "u", false, "convert from Shift_JIS into UTF-8")
-	flag.StringVar(&path, "f", "", "input filename")
 	flag.StringVar(&outpath, "o", "", "output filename")
 
 	flag.Parse()
+
+	path = flag.Arg(0)
 
 	input, err = getInput(path)
 	if err != nil {
