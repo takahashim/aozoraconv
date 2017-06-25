@@ -22,6 +22,28 @@ func errorf(format string, a ...interface{}) (ret int, err error) {
 	return ret, err
 }
 
+func getOuput(path string) (output io.Writer, err error) {
+	if path == "" {
+		return os.Stdout, nil
+	}
+	output, err = os.OpenFile(path, os.O_WRONLY|os.O_CREATE, 0644)
+	if err != nil {
+		return nil, err
+	}
+	return output, nil
+}
+
+func getInput(path string) (input io.Reader, err error) {
+	if path == "" {
+		return os.Stdin, nil
+	}
+	input, err = os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+	return input, nil
+}
+
 func doMain() int {
 	const encSjis = 1
 	const encUtf8 = 2
@@ -42,24 +64,16 @@ func doMain() int {
 
 	flag.Parse()
 
-	if path == "" {
-		input = os.Stdin
-	} else {
-		input, err = os.Open(path)
-		if err != nil {
-			errorf("error: %v", err)
-			return 1
-		}
+	input, err = getInput(path)
+	if err != nil {
+		errorf("error: %v", err)
+		return 1
 	}
 
-	if outpath == "" {
-		output = os.Stdout
-	} else {
-		output, err = os.OpenFile(outpath, os.O_WRONLY|os.O_CREATE, 0600)
-		if err != nil {
-			errorf("%s", err)
-			return 1
-		}
+	output, err = getOuput(outpath)
+	if err != nil {
+		errorf("%s", err)
+		return 1
 	}
 
 	if strings.ToLower(encoding) == "utf8" || strings.ToLower(encoding) == "utf-8" || useUtf8 {
