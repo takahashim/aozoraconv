@@ -45,9 +45,6 @@ func doMain() int {
 		enc              int
 		path, outpath    string
 		encoding         string
-		input            io.Reader
-		output           io.Writer
-		err              error
 	)
 
 	flag.StringVar(&encoding, "e", "sjis", "set output encoding (sjis or utf8)")
@@ -59,13 +56,13 @@ func doMain() int {
 
 	path = flag.Arg(0)
 
-	input, err = getInput(path)
+	input, err := getInput(path)
 	if err != nil {
 		errorf("error: %s", err)
 		return 1
 	}
 
-	output, err = getOuput(outpath)
+	output, err := getOuput(outpath)
 	if err != nil {
 		errorf("error: %s", err)
 		return 1
