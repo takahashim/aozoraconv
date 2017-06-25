@@ -68,13 +68,13 @@ func doMain() int {
 
 	input, err = getInput(path)
 	if err != nil {
-		errorf("error: %v", err)
+		errorf("error: %s", err)
 		return 1
 	}
 
 	output, err = getOuput(outpath)
 	if err != nil {
-		errorf("%s", err)
+		errorf("error: %s", err)
 		return 1
 	}
 
