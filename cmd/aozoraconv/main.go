@@ -8,6 +8,6 @@ import (
 
 func main() {
 	var str = "—―＼〜～‖∥−－¥￥¢￠£￡¬￢｜・◯"
-	fmt.Println(aozoraconv.AozoraConv(str))
+	fmt.Println(aozoraconv.Conv(str))
 	fmt.Printf("aaa")
 }
