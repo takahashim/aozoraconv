@@ -10,13 +10,14 @@
 package main
 
 // This program generates tables.go:
-//	go run maketables.go | gofmt > tables.go
+//	go run maketables.go | gofmt > /tmp/tables.go && cp /tmp/tables.go .
 
 import (
 	"bufio"
 	"fmt"
 	"log"
 	"net/http"
+	"reflect"
 	"sort"
 	"strings"
 
@@ -187,10 +188,22 @@ func main() {
 		fmt.Printf("}\n\n")
 	}
 
+	keys1 := reflect.ValueOf(multichars).MapKeys()
+	sort.Slice(keys1, func(i, j int) bool {
+		return keys1[i].Int() < keys1[j].Int()
+	})
+
 	fmt.Printf("var multichars = map[int32]map[int32]JisEntry{\n")
-	for u1, m1 := range multichars {
+	for _, k1 := range keys1 {
+		u1 := int32(k1.Int())
 		fmt.Printf("\t0x%X: {\n", u1)
-		for u2, v := range m1 {
+		keys2 := reflect.ValueOf(multichars[u1]).MapKeys()
+		sort.Slice(keys2, func(i, j int) bool {
+			return keys2[i].Int() < keys2[j].Int()
+		})
+		for _, k2 := range keys2 {
+			u2 := int32(k2.Int())
+			v := multichars[u1][u2]
 			fmt.Printf("\t\t0x%X: JisEntry{men: %d, ku: %d, ten: %d},\n", u2, v.men, v.ku, v.ten)
 		}
 		fmt.Printf("\t},\n")

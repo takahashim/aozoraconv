@@ -12774,32 +12774,8 @@ var encode4 = [...]uint16{
 }
 
 var multichars = map[int32]map[int32]JisEntry{
-	0x304B: {
-		0x309A: JisEntry{men: 1, ku: 4, ten: 87},
-	},
-	0x304F: {
-		0x309A: JisEntry{men: 1, ku: 4, ten: 89},
-	},
-	0x30AB: {
-		0x309A: JisEntry{men: 1, ku: 5, ten: 87},
-	},
-	0x30B3: {
-		0x309A: JisEntry{men: 1, ku: 5, ten: 91},
-	},
-	0x30C4: {
-		0x309A: JisEntry{men: 1, ku: 5, ten: 93},
-	},
-	0x31F7: {
-		0x309A: JisEntry{men: 1, ku: 6, ten: 88},
-	},
-	0x2E9: {
-		0x2E5: JisEntry{men: 1, ku: 11, ten: 69},
-	},
-	0x30B1: {
-		0x309A: JisEntry{men: 1, ku: 5, ten: 90},
-	},
-	0x30C8: {
-		0x309A: JisEntry{men: 1, ku: 5, ten: 94},
+	0xE6: {
+		0x300: JisEntry{men: 1, ku: 11, ten: 36},
 	},
 	0x254: {
 		0x300: JisEntry{men: 1, ku: 11, ten: 40},
@@ -12809,14 +12785,9 @@ var multichars = map[int32]map[int32]JisEntry{
 		0x300: JisEntry{men: 1, ku: 11, ten: 44},
 		0x301: JisEntry{men: 1, ku: 11, ten: 45},
 	},
-	0x30AF: {
-		0x309A: JisEntry{men: 1, ku: 5, ten: 89},
-	},
-	0x30BB: {
-		0x309A: JisEntry{men: 1, ku: 5, ten: 92},
-	},
-	0xE6: {
-		0x300: JisEntry{men: 1, ku: 11, ten: 36},
+	0x25A: {
+		0x300: JisEntry{men: 1, ku: 11, ten: 46},
+		0x301: JisEntry{men: 1, ku: 11, ten: 47},
 	},
 	0x28C: {
 		0x300: JisEntry{men: 1, ku: 11, ten: 42},
@@ -12825,8 +12796,17 @@ var multichars = map[int32]map[int32]JisEntry{
 	0x2E5: {
 		0x2E9: JisEntry{men: 1, ku: 11, ten: 70},
 	},
+	0x2E9: {
+		0x2E5: JisEntry{men: 1, ku: 11, ten: 69},
+	},
+	0x304B: {
+		0x309A: JisEntry{men: 1, ku: 4, ten: 87},
+	},
 	0x304D: {
 		0x309A: JisEntry{men: 1, ku: 4, ten: 88},
+	},
+	0x304F: {
+		0x309A: JisEntry{men: 1, ku: 4, ten: 89},
 	},
 	0x3051: {
 		0x309A: JisEntry{men: 1, ku: 4, ten: 90},
@@ -12834,11 +12814,31 @@ var multichars = map[int32]map[int32]JisEntry{
 	0x3053: {
 		0x309A: JisEntry{men: 1, ku: 4, ten: 91},
 	},
+	0x30AB: {
+		0x309A: JisEntry{men: 1, ku: 5, ten: 87},
+	},
 	0x30AD: {
 		0x309A: JisEntry{men: 1, ku: 5, ten: 88},
 	},
-	0x25A: {
-		0x300: JisEntry{men: 1, ku: 11, ten: 46},
-		0x301: JisEntry{men: 1, ku: 11, ten: 47},
+	0x30AF: {
+		0x309A: JisEntry{men: 1, ku: 5, ten: 89},
+	},
+	0x30B1: {
+		0x309A: JisEntry{men: 1, ku: 5, ten: 90},
+	},
+	0x30B3: {
+		0x309A: JisEntry{men: 1, ku: 5, ten: 91},
+	},
+	0x30BB: {
+		0x309A: JisEntry{men: 1, ku: 5, ten: 92},
+	},
+	0x30C4: {
+		0x309A: JisEntry{men: 1, ku: 5, ten: 93},
+	},
+	0x30C8: {
+		0x309A: JisEntry{men: 1, ku: 5, ten: 94},
+	},
+	0x31F7: {
+		0x309A: JisEntry{men: 1, ku: 6, ten: 88},
 	},
 }
