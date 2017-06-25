@@ -25,6 +25,14 @@ var (
 	aozoraUtf8CharReplacerR = strings.NewReplacer(reverse(aozoraCharMap)...)
 )
 
+const (
+	// EncSjis is magic number of Shift_JIS
+	EncSjis = 1
+
+	// EncUtf8 is magic number of UTF-8
+	EncUtf8 = 2
+)
+
 // reverse reverses aozoraUtf8CharReplacer
 func reverse(s []string) []string {
 	r := make([]string, len(s))

@@ -11,10 +11,6 @@ import (
 	"github.com/takahashim/aozoraconv"
 )
 
-func main() {
-	os.Exit(doMain())
-}
-
 func errorf(format string, a ...interface{}) (ret int, err error) {
 	ret, err = fmt.Fprintf(os.Stderr, format+"\n", a...)
 	return ret, err
@@ -43,16 +39,16 @@ func getInput(path string) (input io.Reader, err error) {
 }
 
 func doMain() int {
-	const encSjis = 1
-	const encUtf8 = 2
 
-	var useSjis, useUtf8 bool
-	var enc int
-	var path, outpath string
-	var encoding string
-	var input io.Reader
-	var output io.Writer
-	var err error
+	var (
+		useSjis, useUtf8 bool
+		enc              int
+		path, outpath    string
+		encoding         string
+		input            io.Reader
+		output           io.Writer
+		err              error
+	)
 
 	flag.StringVar(&encoding, "e", "sjis", "set output encoding (sjis or utf8)")
 	flag.BoolVar(&useSjis, "s", false, "convert from UTF-8 into Shift_JIS")
@@ -76,17 +72,17 @@ func doMain() int {
 	}
 
 	if strings.ToLower(encoding) == "utf8" || strings.ToLower(encoding) == "utf-8" || useUtf8 {
-		enc = encUtf8
+		enc = aozoraconv.EncUtf8
 	} else if strings.ToLower(encoding) == "sjis" || strings.ToLower(encoding) == "shift_jis" || useSjis {
-		enc = encSjis
+		enc = aozoraconv.EncSjis
 	} else {
 		errorf("define encoding -s (Shift_JIS) or -u (UTF-8) or -e sting")
 		return 1
 	}
 
-	if enc == encUtf8 {
+	if enc == aozoraconv.EncUtf8 {
 		err = aozoraconv.Decode(input, output)
-	} else {
+	} else { // enc == aozoraconv.EncSjis
 		err = aozoraconv.Encode(input, output)
 	}
 	if err != nil {
@@ -94,4 +90,8 @@ func doMain() int {
 		return 1
 	}
 	return 0
+}
+
+func main() {
+	os.Exit(doMain())
 }
