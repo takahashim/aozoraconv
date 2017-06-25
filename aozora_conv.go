@@ -6,14 +6,14 @@ import (
 
 var (
 	aozoraCharMap = []string{
-		"\u2014", "\u2015",
-		"\u301C", "\uFF5E",
-		"\u2016", "\u2225",
-		"\u2212", "\uFF0D",
-		"\u00A2", "\uFFE0",
-		"\u00A3", "\uFFE1",
-		"\u00A5", "\uFFE5",
-		"\u00AC", "\uFFE2",
+		"\u2014", "\u2015", // "—"
+		"\u301C", "\uFF5E", // "〜"
+		"\u2016", "\u2225", // "‖"
+		"\u2212", "\uFF0D", // "−"
+		"\u00A2", "\uFFE0", // "¢"
+		"\u00A3", "\uFFE1", // "£"
+		"\u00A5", "\uFFE5", // "¥"
+		"\u00AC", "\uFFE2", // "¬"
 	}
 	aozoraUtf8CharReplacer  = strings.NewReplacer(aozoraCharMap...)
 	aozoraUtf8CharReplacerR = strings.NewReplacer(Reverse(aozoraCharMap)...)
@@ -29,12 +29,12 @@ func Reverse(s []string) []string {
 	return r
 }
 
-// AozoraConv replaces some characters in Unicode
-func AozoraConv(str string) string {
+// Conv replaces some characters in Unicode
+func Conv(str string) string {
 	return aozoraUtf8CharReplacer.Replace(str)
 }
 
-// AozoraConvR replaces some characters in Unicode
-func AozoraConvR(str string) string {
+// ConvRev replaces some characters in Unicode
+func ConvRev(str string) string {
 	return aozoraUtf8CharReplacerR.Replace(str)
 }

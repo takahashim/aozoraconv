@@ -25,8 +25,8 @@ func TestAozoraConv(t *testing.T) {
 		{"¢", "￠"},
 	}
 	for _, tt := range convertedStrings {
-		if got, want := AozoraConv(tt.in), tt.out; got != want {
-			t.Errorf("AozoraConv: got %v want %v", got, want)
+		if got, want := Conv(tt.in), tt.out; got != want {
+			t.Errorf("Conv: got %v want %v", got, want)
 		}
 	}
 }
@@ -47,8 +47,8 @@ func TestAozoraConvR(t *testing.T) {
 		{"￠", "¢"},
 	}
 	for _, tt := range convertedStrings {
-		if got, want := AozoraConvR(tt.in), tt.out; got != want {
-			t.Errorf("AozoraConvR: got %v want %v", got, want)
+		if got, want := ConvRev(tt.in), tt.out; got != want {
+			t.Errorf("ConvRev: got %v want %v", got, want)
 		}
 	}
 }
