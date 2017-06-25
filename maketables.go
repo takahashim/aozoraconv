@@ -23,20 +23,16 @@ import (
 	"github.com/takahashim/aozoraconv"
 )
 
-type entry struct {
+type JisEntry struct {
 	men, ku, ten int
 }
 
-type twochars struct {
-	ch1, ch2 int32
-}
-
-type UnicodeTbl [65536 * 4]entry
+type UnicodeTbl [65536 * 4]JisEntry
 type JisTbl [2][94][94]string
 
 var reverse UnicodeTbl
 var mapping JisTbl
-var multichars map[twochars]entry
+var multichars map[int32]map[int32]JisEntry
 
 func getTable(url string) {
 	for i := range reverse {
@@ -52,7 +48,6 @@ func getTable(url string) {
 
 	scanner := bufio.NewScanner(res.Body)
 	for scanner.Scan() {
-		var mkey twochars
 		s := strings.TrimSpace(scanner.Text())
 		if s == "" || s[0] == '#' {
 			continue
@@ -61,9 +56,6 @@ func getTable(url string) {
 
 		if err = aozoraconv.ParseLine(s, &m, &k, &t, &uni, &uni2); err != nil {
 			log.Fatalf("could not parse %q; %v", s, err)
-		}
-		if uni2 > 0 {
-			mkey = twochars{ch1: uni, ch2: uni2}
 		}
 		m -= 2
 		k -= 32
@@ -77,10 +69,13 @@ func getTable(url string) {
 		if t < 1 || 94 < t {
 			log.Fatalf("JIS code ten %d is out of range", t)
 		}
-		e := entry{men: m, ku: k, ten: t}
+		e := JisEntry{men: m, ku: k, ten: t}
 		if uni2 > 0 {
 			mapping[m-1][k-1][t-1] = string([]rune{uni, uni2})
-			multichars[mkey] = e
+			if _, exist := multichars[uni]; !exist {
+				multichars[uni] = make(map[int32]JisEntry)
+			}
+			multichars[uni][uni2] = e
 		} else if uni > 0 {
 			mapping[m-1][k-1][t-1] = string([]rune{uni})
 			if reverse[uni].men == -1 {
@@ -102,26 +97,33 @@ func main() {
 
 	reverse = UnicodeTbl{}
 	mapping = JisTbl{}
-	multichars = make(map[twochars]entry)
+	multichars = make(map[int32]map[int32]JisEntry)
 
 	url := "http://x0213.org/codetable/jisx0213-2004-std.txt"
 	getTable(url)
 
 	fmt.Printf("// jis0213Decode is the decoding table from JIS 0213 code to Unicode.\n// It is defined at %s\n",
 		url)
-	fmt.Printf("var jis0213Decode = [...][...][...]uint32{\n")
+	fmt.Printf("var jis0213Decode = [...][...][...]string{\n")
+	var counter int = 0
 	for _, m1 := range mapping {
-		fmt.Printf("\t{\n\t\t")
+		fmt.Printf("\t{\n")
 		for _, m2 := range m1 {
-			fmt.Printf("{\n")
+			fmt.Printf("\t\t{")
+			counter = 0
 			for _, m3 := range m2 {
 				if m3 != "" {
-					fmt.Printf("\t\t\t%q,\n", m3)
+					fmt.Printf("\t%q,", m3)
+					counter++
+					if counter >= 8 {
+						counter = 0
+						fmt.Printf("\n\t\t")
+					}
 				}
 			}
-			fmt.Printf("\t\t},")
+			fmt.Printf("\t},\n")
 		}
-		fmt.Printf("\n\t},\n")
+		fmt.Printf("\t},\n")
 	}
 	fmt.Printf("}\n\n")
 
@@ -153,7 +155,7 @@ func main() {
 	fmt.Printf("const (\n")
 	fmt.Printf("\tcodeMask   = 0x7f\n")
 	fmt.Printf("\tcodeShift  = 7\n")
-	fmt.Printf("\ttableShift = 14\n")
+	fmt.Printf("\tplaneShift = 14\n")
 	fmt.Printf(")\n\n")
 
 	fmt.Printf("const numEncodeTables = %d\n\n", len(intervals))
@@ -170,18 +172,28 @@ func main() {
 	fmt.Printf("\n")
 
 	for i, v := range intervals {
-		fmt.Printf("const encode%dLow, encode%dHigh = %d, %d\n\n", i, i, v.low, v.high)
+		fmt.Printf("const encode%dLow, encode%dHigh = 0x%x, 0x%x\n\n", i, i, v.low, v.high)
 		fmt.Printf("var encode%d = [...]uint16{\n", i)
 		for j := v.low; j < v.high; j++ {
 			x := reverse[j]
 			if x.men == -1 {
 				continue
 			}
-			fmt.Printf("\t%d - %d: %X<<14 | 0x%02X<<7 | 0x%02X,\n",
-				j, v.low, x.men, x.ku, x.ten)
+			fmt.Printf("\t0x%x - 0x%x: %d<<14 | %2d<<7 | %2d, // %q\n",
+				j, v.low, x.men, x.ku, x.ten, string(rune(j)))
 		}
 		fmt.Printf("}\n\n")
 	}
+
+	fmt.Printf("multichars := map[int32]map[int32]JisEntry{\n")
+	for u1, m1 := range multichars {
+		fmt.Printf("\t0x%X: {\n", u1)
+		for u2, v := range m1 {
+			fmt.Printf("\t\t0x%X: JisEntry{men: %d, ku: %d, ten: %d},\n", u2, v.men, v.ku, v.ten)
+		}
+		fmt.Printf("\t},\n")
+	}
+	fmt.Printf("}\n")
 }
 
 // interval is a half-open interval [low, high).
