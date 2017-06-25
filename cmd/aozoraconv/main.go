@@ -5,13 +5,10 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"strings"
 
 	"github.com/takahashim/aozoraconv"
-	"golang.org/x/text/encoding/japanese"
-	"golang.org/x/text/transform"
 )
 
 func main() {
@@ -79,42 +76,22 @@ func doMain() int {
 	}
 
 	if strings.ToLower(encoding) == "utf8" || strings.ToLower(encoding) == "utf-8" || useUtf8 {
-		enc = 2
+		enc = encUtf8
 	} else if strings.ToLower(encoding) == "sjis" || strings.ToLower(encoding) == "shift_jis" || useSjis {
-		enc = 1
+		enc = encSjis
 	} else {
 		errorf("define encoding -s (Shift_JIS) or -u (UTF-8) or -e sting")
 		return 1
 	}
 
 	if enc == encUtf8 {
-		decoder := japanese.ShiftJIS.NewDecoder()
-		reader := transform.NewReader(input, decoder)
-		ret, err := ioutil.ReadAll(reader)
-		if err != nil {
-			errorf("error: %v", err)
-			return 1
-		}
-		str := aozoraconv.ConvRev(string(ret))
-		_, err = fmt.Fprint(output, str)
-		if err != nil {
-			errorf("error: %v", err)
-			return 1
-		}
+		err = aozoraconv.Decode(input, output)
 	} else {
-		ret, err := ioutil.ReadAll(input)
-		if err != nil {
-			errorf("error: %v", err)
-			return 1
-		}
-		str := aozoraconv.Conv(string(ret))
-		encoder := japanese.ShiftJIS.NewEncoder()
-		writer := transform.NewWriter(output, encoder)
-		_, err = fmt.Fprint(writer, str)
-		if err != nil {
-			errorf("error: %v", err)
-			return 1
-		}
+		err = aozoraconv.Encode(input, output)
+	}
+	if err != nil {
+		errorf("error: %v", err)
+		return 1
 	}
 	return 0
 }
