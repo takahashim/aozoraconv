@@ -158,3 +158,56 @@ func TestDecode(t *testing.T) {
 		}
 	}
 }
+
+func TestUni2Jis(t *testing.T) {
+	var convertedPairs = []struct {
+		in        string
+		out       JisEntry
+		isSuccess bool
+	}{
+		{"あ", JisEntry{men: 1, ku: 4, ten: 2}, true},
+		{"。", JisEntry{men: 1, ku: 1, ten: 3}, true},
+		{"◆", JisEntry{men: 1, ku: 2, ten: 1}, true},
+		{"A", JisEntry{0, 0, 0}, false},
+		{"☺", JisEntry{0, 0, 0}, false},
+	}
+	for _, tt := range convertedPairs {
+		got, err := Uni2Jis(tt.in)
+		if want := tt.out; got != want {
+			t.Errorf("Uni2Jis got: %v, want: %v", got, tt.out)
+		}
+		if err != nil && tt.isSuccess {
+			t.Errorf("Uni2Jis got: %v want: %v; should be error but %v", got, tt.out, err)
+		} else if err == nil && !tt.isSuccess {
+			t.Errorf("Uni2Jis got: %v want: %v; should be error but %v", got, tt.out, err)
+		}
+	}
+}
+
+func TestJis2Uni(t *testing.T) {
+	var convertedPairs = []struct {
+		men, ku, ten int
+		out          string
+		isSuccess    bool
+	}{
+		{1, 4, 2, "あ", true},
+		{1, 1, 3, "。", true},
+		{1, 2, 1, "◆", true},
+		{2, 3, 17, "𠗖", true},
+		{2, 2, 80, "", false},
+		{3, 2, 10, "", false},
+	}
+	for _, tt := range convertedPairs {
+		got, err := Jis2Uni(tt.men, tt.ku, tt.ten)
+		if err != nil && tt.isSuccess {
+			t.Errorf("Jis2Uni got: %v want: %v; should not be error but %v", got, tt.out, err)
+		} else if err == nil {
+			if !tt.isSuccess {
+				t.Errorf("Jis2Uni got: %v want: %v; should be error but %v", got, tt.out, err)
+			}
+			if want := tt.out; got != want {
+				t.Errorf("Jis2Uni got: %v, want: %v", got, tt.out)
+			}
+		}
+	}
+}
