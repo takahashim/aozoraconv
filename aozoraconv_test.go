@@ -196,6 +196,7 @@ func TestJis2Uni(t *testing.T) {
 		{2, 3, 17, "𠗖", true},
 		{2, 2, 80, "", false},
 		{3, 2, 10, "", false},
+		{1, 2, 100, "", false},
 	}
 	for _, tt := range convertedPairs {
 		got, err := Jis2Uni(tt.men, tt.ku, tt.ten)
