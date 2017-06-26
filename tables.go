@@ -4,7 +4,7 @@
 package aozoraconv // import "github.com/takahashim/aozoraconv"
 
 type JisEntry struct {
-	men, ku, ten int
+	men, ku, ten int8
 }
 
 // jis0213Decode is the decoding table from JIS 0213 code to Unicode.

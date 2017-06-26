@@ -103,7 +103,7 @@ func main() {
 	url := "http://x0213.org/codetable/jisx0213-2004-std.txt"
 	getTable(url)
 
-	fmt.Printf("type JisEntry struct {\n	men, ku, ten int\n}\n")
+	fmt.Printf("type JisEntry struct {\n	men, ku, ten int8\n}\n")
 
 	fmt.Printf("// jis0213Decode is the decoding table from JIS 0213 code to Unicode.\n// It is defined at %s\n",
 		url)
