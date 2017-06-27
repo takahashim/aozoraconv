@@ -148,7 +148,7 @@ func Is0208(men, ku, ten int) bool {
 	case ku == 2:
 		return (0x01 <= ten && ten <= 0x0e) ||
 			(0x1a <= ten && ten <= 0x1f) ||
-			(0x20 <= ten && ten <= 0x22) ||
+			(0x20 <= ten && ten <= 0x21) ||
 			(0x2a <= ten && ten <= 0x30) ||
 			(0x3c <= ten && ten <= 0x4a) ||
 			(0x52 <= ten && ten <= 0x59) ||
