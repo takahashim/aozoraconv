@@ -93,6 +93,7 @@ func Jis2Uni(men, ku, ten int) (str string, err error) {
 
 // Uni2Jis returns a pointer of JisEntry
 func Uni2Jis(str string) (jis JisEntry, err error) {
+	var s1 uint16
 	r := []rune(str)
 	r1 := r[0]
 	if len(r) == 1 {
@@ -100,36 +101,36 @@ func Uni2Jis(str string) (jis JisEntry, err error) {
 		case 0x20 <= r1 && r1 < 0x7f:
 			return JisEntry{0, 0, 0}, fmt.Errorf("ASCII character")
 		case encode0Low <= r1 && r1 < encode0High:
-			if r1 = rune(encode0[r1-encode0Low]); uint8(r1>>planeShift)&0x03 > 0 {
+			if s1 = encode0[r1-encode0Low]; (s1>>planeShift)&0x0003 > 0 {
 				goto write2
 			}
 		case encode1Low <= r1 && r1 < encode1High:
-			if r1 = rune(encode1[r1-encode1Low]); uint8(r1>>planeShift)&0x03 > 0 {
+			if s1 = encode1[r1-encode1Low]; (s1>>planeShift)&0x0003 > 0 {
 				goto write2
 			}
 		case encode2Low <= r1 && r1 < encode2High:
-			if r1 = rune(encode2[r1-encode2Low]); uint8(r1>>planeShift)&0x03 > 0 {
+			if s1 = encode2[r1-encode2Low]; (s1>>planeShift)&0x0003 > 0 {
 				goto write2
 			}
 		case encode3Low <= r1 && r1 < encode3High:
-			if r1 = rune(encode3[r1-encode3Low]); uint8(r1>>planeShift)&0x03 > 0 {
+			if s1 = encode3[r1-encode3Low]; (s1>>planeShift)&0x0003 > 0 {
 				goto write2
 			}
 		case encode4Low <= r1 && r1 < encode4High:
-			if r1 = rune(encode4[r1-encode4Low]); uint8(r1>>planeShift)&0x03 > 0 {
+			if s1 = encode4[r1-encode4Low]; (s1>>planeShift)&0x0003 > 0 {
 				goto write2
 			}
 		}
 		return JisEntry{0, 0, 0}, fmt.Errorf("invalid character")
 	write2:
-		men := int8(r1 >> planeShift)
-		ku := int8(uint8(r1>>codeShift) & codeMask)
-		ten := int8(uint8(r1) & codeMask)
+		men := int8(s1 >> planeShift)
+		ku := int8((s1 >> codeShift) & codeMask)
+		ten := int8((s1) & codeMask)
 		return JisEntry{men: men, ku: ku, ten: ten}, nil
 	} else if len(r) == 2 {
 		r2 := r[1]
-		entry, b := multichars[r1][r2]
-		if !b {
+		entry, ok := multichars[r1][r2]
+		if !ok {
 			return JisEntry{0, 0, 0}, err
 		}
 		return entry, nil
