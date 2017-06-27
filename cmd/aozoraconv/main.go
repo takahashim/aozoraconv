@@ -27,7 +27,10 @@ func getOuput(path string) (output io.Writer, err error) {
 	return output, nil
 }
 
-func getInput(path string) (input io.Reader, err error) {
+func getInput(path string, stdin bool) (input io.Reader, err error) {
+	if stdin {
+		return os.Stdin, nil
+	}
 	if path == "" {
 		return nil, errors.New("input file is not defined")
 	}
@@ -42,6 +45,7 @@ func doMain() int {
 
 	var (
 		useSjis, useUtf8 bool
+		useStdin         bool
 		enc              int
 		path, outpath    string
 		encoding         string
@@ -51,12 +55,13 @@ func doMain() int {
 	flag.BoolVar(&useSjis, "s", false, "convert from UTF-8 into Shift_JIS")
 	flag.BoolVar(&useUtf8, "u", false, "convert from Shift_JIS into UTF-8")
 	flag.StringVar(&outpath, "o", "", "output filename")
+	flag.BoolVar(&useStdin, "stdin", false, "use standard input")
 
 	flag.Parse()
 
 	path = flag.Arg(0)
 
-	input, err := getInput(path)
+	input, err := getInput(path, useStdin)
 	if err != nil {
 		errorf("error: %s", err)
 		return 1
