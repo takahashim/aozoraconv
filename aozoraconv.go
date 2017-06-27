@@ -181,3 +181,22 @@ func Is0208(men, ku, ten int) bool {
 		return false
 	}
 }
+
+// Kuten2Sjis returns SJIS byte strings (2 byte) from ku-ten code
+func Kuten2Sjis(ku, ten int) []byte {
+	var seq, c1, c2, s1, s2 int
+	seq = (ku-1)*94 + (ten - 1)
+	c1 = seq / 188
+	c2 = seq % 188
+	if c1 < 31 {
+		s1 = c1 + 129
+	} else {
+		s1 = c1 + 193
+	}
+	if c2 < 63 {
+		s2 = c2 + 64
+	} else {
+		s2 = c2 + 65
+	}
+	return []byte{uint8(s1), uint8(s2)}
+}
