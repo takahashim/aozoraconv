@@ -138,6 +138,7 @@ func Uni2Jis(str string) (jis JisEntry, err error) {
 	return JisEntry{0, 0, 0}, fmt.Errorf("length of string should be 1 or 2")
 }
 
+// Is0208 checks triplet men-ku-ten is in JIS X 0208 or not
 func Is0208(men, ku, ten int) bool {
 	if men != 1 {
 		return false

@@ -226,23 +226,96 @@ func TestIs0208(t *testing.T) {
 		{3, 2, 10, false},
 		{1, 2, 100, false},
 		{0, 1, 1, false},
+
 		{1, 0, 0, false},
 		{1, 1, 0, false},
 		{1, 1, 1, true},
-		{1, 1, 93, true},
-		{1, 1, 94, true},
-		{1, 1, 95, false},
-		{1, 2, 0, false},
-		{1, 2, 1, true},
-		{1, 2, 14, true},
-		{1, 2, 15, false},
-		{1, 2, 16, false},
-		{1, 2, 25, false},
+		{1, 1, 93, true}, {1, 1, 94, true}, {1, 1, 95, false},
+		{1, 2, 0, false}, {1, 2, 1, true},
+		{1, 2, 14, true}, {1, 2, 15, false}, {1, 2, 16, false},
+		{1, 2, 25, false}, {1, 2, 26, true},
+		{1, 2, 33, true}, {1, 2, 34, false},
+		{1, 2, 41, false}, {1, 2, 42, true},
+		{1, 2, 48, true}, {1, 2, 49, false},
+		{1, 2, 59, false}, {1, 2, 60, true},
+		{1, 2, 74, true}, {1, 2, 75, false},
+		{1, 2, 81, false}, {1, 2, 82, true},
+		{1, 2, 89, true}, {1, 2, 90, false},
+		{1, 2, 93, false}, {1, 2, 94, true}, {1, 2, 95, false},
+		{1, 3, 1, false},
+		{1, 3, 15, false}, {1, 3, 16, true},
+		{1, 3, 25, true}, {1, 3, 26, false},
+		{1, 3, 32, false}, {1, 3, 33, true},
+		{1, 3, 58, true}, {1, 3, 59, false},
+		{1, 3, 64, false}, {1, 3, 65, true},
+		{1, 3, 90, true}, {1, 3, 91, false},
+		{1, 3, 94, false},
+		{1, 4, 1, true}, {1, 4, 83, true}, {1, 4, 84, false}, {1, 4, 94, false},
+		{1, 5, 1, true},
+		{1, 5, 86, true}, {1, 5, 87, false},
+		{1, 5, 94, false},
+		{1, 6, 1, true},
+		{1, 6, 24, true}, {1, 6, 25, false},
+		{1, 6, 32, false}, {1, 6, 33, true},
+		{1, 6, 56, true}, {1, 6, 57, false},
+		{1, 7, 1, true},
+		{1, 7, 33, true}, {1, 7, 34, false},
+		{1, 7, 48, false}, {1, 7, 49, true},
+		{1, 7, 81, true}, {1, 7, 82, false},
+		{1, 8, 1, true},
+		{1, 8, 32, true},
+		{1, 8, 33, false},
+		{1, 9, 1, false}, {1, 15, 1, false},
+		{1, 16, 1, true},
+		{1, 16, 94, true}, {1, 16, 95, false},
+		{1, 17, 1, true},
+		{1, 47, 1, true},
+		{1, 47, 51, true}, {1, 47, 52, false},
+		{1, 48, 1, true},
+		{1, 84, 1, true},
+		{1, 84, 6, true}, {1, 84, 7, false},
 	}
 	for _, tt := range convertedPairs {
 		got := Is0208(tt.men, tt.ku, tt.ten)
 		if got != tt.isSuccess {
 			t.Errorf("Is0208 %v,%v,%v, got: %v want: %v", tt.men, tt.ku, tt.ten, got, tt.isSuccess)
 		}
+	}
+}
+
+func TestKuten2Sjis(t *testing.T) {
+	var convertedPairs = []struct {
+		ku, ten int
+		sjis    []byte
+	}{
+		{1, 1, []byte{0x81, 0x40}},   // "　"
+		{2, 1, []byte{0x81, 0x9F}},   // "◆"
+		{4, 2, []byte{0x82, 0xA0}},   // "あ"
+		{16, 1, []byte{0x88, 0x9F}},  // "亜"
+		{47, 52, []byte{0x98, 0x73}}, // only in JIS X 0213, not 0208
+		{84, 6, []byte{0xEA, 0xA4}},
+	}
+	for _, tt := range convertedPairs {
+		got, want := Kuten2Sjis(tt.ku, tt.ten), tt.sjis
+		if bytes.Compare(got, want) != 0 {
+			t.Errorf("Kuten2Sjis got: %v want: %v", got, want)
+		}
+	}
+
+}
+
+func TestAllKuten2SjisChars(t *testing.T) {
+	buf := make([]byte, 0)
+	for ku := 1; ku < 96; ku++ {
+		for ten := 0; ten < 96; ten++ {
+			if Is0208(1, ku, ten) {
+				chrs := Kuten2Sjis(ku, ten)
+				buf = append(buf, chrs[0], chrs[1])
+			}
+		}
+	}
+	got, want := len(buf), 13758
+	if len(buf) != want {
+		t.Errorf("kuten2sjis got: %v want: %v", got, want)
 	}
 }
