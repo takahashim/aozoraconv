@@ -137,3 +137,47 @@ func Uni2Jis(str string) (jis JisEntry, err error) {
 	}
 	return JisEntry{0, 0, 0}, fmt.Errorf("length of string should be 1 or 2")
 }
+
+func Is0208(men, ku, ten int) bool {
+	if men != 1 {
+		return false
+	}
+	switch {
+	case ku == 1:
+		return 0x01 <= ten && ten <= 0x5e
+	case ku == 2:
+		return (0x01 <= ten && ten <= 0x0e) ||
+			(0x1a <= ten && ten <= 0x1f) ||
+			(0x20 <= ten && ten <= 0x22) ||
+			(0x2a <= ten && ten <= 0x30) ||
+			(0x3c <= ten && ten <= 0x4a) ||
+			(0x52 <= ten && ten <= 0x59) ||
+			(ten == 0x5e)
+	case ku == 3:
+		return (0x10 <= ten && ten <= 0x19) ||
+			(0x21 <= ten && ten <= 0x3a) ||
+			(0x41 <= ten && ten <= 0x5a)
+	case ku == 4:
+		return 0x01 <= ten && ten <= 0x53
+	case ku == 5:
+		return 0x01 <= ten && ten <= 0x56
+	case ku == 6:
+		return (0x01 <= ten && ten <= 0x18) ||
+			(0x21 <= ten && ten <= 0x38)
+	case ku == 7:
+		return (0x01 <= ten && ten <= 0x21) ||
+			(0x31 <= ten && ten <= 0x51)
+	case ku == 8:
+		return 0x01 <= ten && ten <= 0x20
+	case 16 <= ku && ku <= 46:
+		return 0x01 <= ten && ten <= 0x5e
+	case ku == 47:
+		return 0x01 <= ten && ten <= 0x33
+	case 48 <= ku && ku <= 83:
+		return 0x01 <= ten && ten <= 0x5e
+	case ku == 84:
+		return 0x01 <= ten && ten <= 0x06
+	default:
+		return false
+	}
+}

@@ -212,3 +212,37 @@ func TestJis2Uni(t *testing.T) {
 		}
 	}
 }
+
+func TestIs0208(t *testing.T) {
+	var convertedPairs = []struct {
+		men, ku, ten int
+		isSuccess    bool
+	}{
+		{1, 4, 2, true},
+		{1, 1, 3, true},
+		{1, 2, 1, true},
+		{2, 3, 17, false},
+		{2, 2, 80, false},
+		{3, 2, 10, false},
+		{1, 2, 100, false},
+		{0, 1, 1, false},
+		{1, 0, 0, false},
+		{1, 1, 0, false},
+		{1, 1, 1, true},
+		{1, 1, 93, true},
+		{1, 1, 94, true},
+		{1, 1, 95, false},
+		{1, 2, 0, false},
+		{1, 2, 1, true},
+		{1, 2, 14, true},
+		{1, 2, 15, false},
+		{1, 2, 16, false},
+		{1, 2, 25, false},
+	}
+	for _, tt := range convertedPairs {
+		got := Is0208(tt.men, tt.ku, tt.ten)
+		if got != tt.isSuccess {
+			t.Errorf("Is0208 %v,%v,%v, got: %v want: %v", tt.men, tt.ku, tt.ten, got, tt.isSuccess)
+		}
+	}
+}
